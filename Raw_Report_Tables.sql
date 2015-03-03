@@ -25,7 +25,7 @@ ENGINE=InnoDB
 AS(
 SELECT 
   DISTINCT
-	Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+  Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
 	ClaimNumber,
 	Servicedate,
 	RevenueProcedureCode
@@ -403,7 +403,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
-  countynm as County
+  countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -441,7 +441,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
-  countynm as County
+  countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -1506,7 +1506,7 @@ SELECT b.uniqID,
 	MAX(diab) as diab,
 	MAX(chf) as chf,
 	MAX(copd) as copd,
-	MAX(asthm) as asthm
+	MAX(asthm) as asthm,
     SUM(b.TotalCharges) as SmTotChg,
     SUM(b.TotalAllowed) as SmTotAllwd,
     SUM(b.TotalPaid) as SmTotPd,
