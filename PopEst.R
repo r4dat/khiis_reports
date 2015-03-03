@@ -29,3 +29,6 @@ StateEst = dcast(StateEst,CTYNAME+year~variable) %>% mutate(adjpop=POPESTIMATE-G
 
 setnames(StateEst,c("county","year","gqest","popest","adjpop"))
 StateEst = StateEst %>% select(county,year,popest,gqest,adjpop)
+
+# Change year to subyr to match submission years in raw data.
+setnames(StateEst,c("county","subyr","gqest","popest","adjpop"))
