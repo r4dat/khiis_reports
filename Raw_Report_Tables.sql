@@ -1506,7 +1506,7 @@ SELECT b.uniqID,
 	MAX(diab) as diab,
 	MAX(chf) as chf,
 	MAX(copd) as copd,
-	MAX(asthm) as asthm,00
+	MAX(asthm) as asthm
     SUM(b.TotalCharges) as SmTotChg,
     SUM(b.TotalAllowed) as SmTotAllwd,
     SUM(b.TotalPaid) as SmTotPd,
