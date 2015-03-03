@@ -37,8 +37,7 @@ readClaimsData = function(year_string){
                   colClasses="character")
   
   
-  setnames(claims,c("uniqID","ageband","gender","county","elgband","membmo","sumtotchg","sumtotallwd","sumtotpd",
-                    "mbrsp","diab","chf","copd","asthm","subyr"))
+  setnames(claims,c("uniqID","ageband","gender","county","elgband","membmo","sumtotchg","sumtotallwd","sumtotpd","mbrsp","diab","chf","copd","asthm","subyr"))
   
   tmp = claims
   remove(claims)
@@ -56,4 +55,15 @@ readClaimsData = function(year_string){
 
   return(tmp)
   
+}
+
+readProcedureData = function(year_string,procedure){
+  base_path = 'D:/MySQL_KHIIS_OUT/'
+  file_string = '_Claim_Summ.csv'
+  
+  
+  
+  proc <- fread(str_c(base_path,year_string,'_',procedure,file_string), header = FALSE,na.strings = NULL,stringsAsFactors = FALSE,showProgress = TRUE,colClasses="character")
+  
+  return(proc)
 }
