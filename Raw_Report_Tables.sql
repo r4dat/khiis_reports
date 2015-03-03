@@ -365,6 +365,7 @@ SELECT
 	b.uniqID,
     b.ClaimNumber,
     b.PatientDOB,
+  countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -389,6 +390,7 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -401,6 +403,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+  countynm as County
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -425,6 +428,7 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -437,6 +441,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+  countynm as County
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -461,6 +466,7 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -472,6 +478,7 @@ LINES TERMINATED BY '\n'
 SELECT b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+  countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -496,6 +503,7 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -503,6 +511,7 @@ INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
+
 
 SET @YEAR_STR='20110101';
 SET @YEAR_END='20111231';
@@ -530,7 +539,7 @@ CREATE TEMPORARY TABLE IF NOT EXISTS
 ENGINE=InnoDB 
 AS(
 SELECT 
-	DISTINCT
+  DISTINCT
 	Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
 	ClaimNumber,
 	Servicedate,
@@ -869,6 +878,7 @@ SELECT
 	b.uniqID,
     b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -893,10 +903,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Gallbladder_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -905,6 +916,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -929,10 +941,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Hip_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Hip_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -941,6 +954,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -965,10 +979,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Colonoscopy_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -976,6 +991,7 @@ LINES TERMINATED BY '\n'
 SELECT b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -1000,10 +1016,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -1372,36 +1389,29 @@ LINES TERMINATED BY '\n'
 
 SELECT 	
 	b.uniqID,
-    b.ClaimNumber,
-    b.PatientDOB,
-    b.PatientGenderCode,
-    b.NAICNo,
-    b.FirstDateOfService,
-    b.LastdateOfService,
-    b.DatePaid,
-    b.Zipcode,
-    b.ClaimReceived,
-	MAX(diab) as diab,
-	MAX(chf) as chf,
-	MAX(copd) as copd,
-	MAX(asthm) as asthm,
+	a.PatientDOB,
+	countynm as County,
     SUM(b.TotalCharges) as SmTotChg,
     SUM(b.TotalAllowed) as SmTotAllwd,
     SUM(b.TotalPaid) as SmTotPd,
     SUM(b.MemberResponsibility) as MbrRsp,
+    MAX(diab) as diab,
+    MAX(chf) as chf,
+    MAX(copd) as copd,
+    MAX(asthm) as asthm,
     b.COORDBENEFITS,
     b.PlanType,
     b.ProductType,
-    b.SubmissionQtr,
     b.SubmissionYear FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Gallbladder_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -1410,6 +1420,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -1434,10 +1445,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Hip_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Hip_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -1446,6 +1458,7 @@ SELECT
 	b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -1470,10 +1483,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Colonoscopy_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -1481,6 +1495,7 @@ LINES TERMINATED BY '\n'
 SELECT b.uniqID,
 	b.ClaimNumber,
     b.PatientDOB,
+	countynm as County,
     b.PatientGenderCode,
     b.NAICNo,
     b.FirstDateOfService,
@@ -1505,10 +1520,11 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
+JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
