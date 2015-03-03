@@ -5,14 +5,14 @@
 --# Age Banding
 DELIMITER $$
 
-CREATE DEFINER=`user`@`localhost` FUNCTION `age_band`(dob char(8)) RETURNS char(5) CHARSET latin1
+CREATE DEFINER=`user`@`localhost` FUNCTION `age_band`(dob char(8),yr_start char(8)) RETURNS char(5) CHARSET latin1
     READS SQL DATA
     DETERMINISTIC
 BEGIN
 declare age int;
 declare band char(5);
 
-SET age = TIMESTAMPDIFF(YEAR,dob,'20120101');
+SET age = TIMESTAMPDIFF(YEAR,dob,yr_start);
 
 CASE
   WHEN age<19 THEN SET band = '0-18';
