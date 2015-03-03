@@ -28,3 +28,4 @@ StateEst$variable = gsub(pattern = '20\\d\\d','',StateEst$variable)
 StateEst = dcast(StateEst,CTYNAME+year~variable) %>% mutate(adjpop=POPESTIMATE-GQESTIMATES)
 
 setnames(StateEst,c("county","year","gqest","popest","adjpop"))
+StateEst = StateEst %>% select(county,year,popest,gqest,adjpop)
