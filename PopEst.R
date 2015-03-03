@@ -12,7 +12,7 @@ library(reshape2)
 ## Read in if not found in environment.
 if(!exists("COEST13")) COEST13 = fread("CO-EST2013-Alldata.csv",stringsAsFactors=FALSE)
 
-StateEst = COEST13 %>% filter(STNAME=='Kansas') %>% 
+StateEst = COEST13 %>% filter(STNAME=='Kansas',CTYNAME!='Kansas') %>% 
            select(CTYNAME,POPESTIMATE2010,POPESTIMATE2011,POPESTIMATE2012,
                   GQESTIMATES2010,GQESTIMATES2011,GQESTIMATES2012)
 
