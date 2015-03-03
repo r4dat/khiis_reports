@@ -63,7 +63,7 @@ SELECT
 	RevenueProcedureCode
 FROM khiisdetailflatfile
 WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
-AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335')
+AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335','45380')
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
@@ -361,52 +361,143 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT 	
+	b.uniqID,
+    b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Hip_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
@@ -477,7 +568,7 @@ SELECT
 	RevenueProcedureCode
 FROM khiisdetailflatfile
 WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
-AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335')
+AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335','45380')
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
@@ -774,54 +865,145 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT 	
+	b.uniqID,
+    b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Gallbladder_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Hip_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Hip_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Colonoscopy_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Mammo_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
@@ -891,7 +1073,7 @@ SELECT
 	RevenueProcedureCode
 FROM khiisdetailflatfile
 WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
-AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335')
+AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335','45380')
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
@@ -1188,54 +1370,145 @@ FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT 	
+	b.uniqID,
+    b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Gallbladder_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM hip as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Hip_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Hip_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT  
+	b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM colonoscopy as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Colonoscopy_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
 
-SELECT * FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+SELECT b.uniqID,
+	b.ClaimNumber,
+    b.PatientDOB,
+    b.PatientGenderCode,
+    b.NAICNo,
+    b.FirstDateOfService,
+    b.LastdateOfService,
+    b.DatePaid,
+    b.Zipcode,
+    b.ClaimReceived,
+	MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+    SUM(b.TotalCharges) as SmTotChg,
+    SUM(b.TotalAllowed) as SmTotAllwd,
+    SUM(b.TotalPaid) as SmTotPd,
+    SUM(b.MemberResponsibility) as MbrRsp,
+    b.COORDBENEFITS,
+    b.PlanType,
+    b.ProductType,
+    b.SubmissionQtr,
+    b.SubmissionYear FROM mammo as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
 AND 
 (
- (a.ClaimNumber=b.ClaimNumber) OR
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
 WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
 
-INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Mammo_Claim_Summ.csv'
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Mammo_Claim_Summ.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 ;
