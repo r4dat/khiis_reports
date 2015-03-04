@@ -29,5 +29,6 @@ mammo12 = readProcedureData(year_string = 2012,procedure = "Mammo")
 
 colo = rbind(colo10,colo11,colo12)
 hip = rbind(hip10,hip11,hip12)
+## Make up for mis-matched columsn with fill=TRUE
 gall = rbind(gall10,gall11,gall12)
 mammo = rbind(mammo10,mammo11,mammo12)
