@@ -7,6 +7,7 @@ library(assertthat)
 options("scipen"=10)
 
 if(!exists("readMembersData", mode="function")) source("readData.R")
+if(!exists("StateEst")) source("PopEst.R")
 
 members10=readMembersData('2010')
 members11=readMembersData('2011')
@@ -38,3 +39,9 @@ out[is.na(out)]=0
 out$elgband=str_c(' ',out$elgband)
 
 write.csv(out,str_c("D:/MySQL_KHIIS_OUT/All_Members_Analysis.csv"),row.names=FALSE)
+
+## Create confidence intervals for counties
+out = tmp %>% group_by(county,subyr) %>% 
+  summarise(ClassSize=n()) %>% inner_join(StateEst,copy = TRUE) %>% select(county,subyr,ClassSize,adjpop) %>% mutate(perc=ClassSize/adjpop) %>% mutate(Completeness=cut(perc,breaks = c(0,.25,.5,.75,1),right=FALSE,labels=c("C1","C2","C3","C4")))
+
+write.csv(out,str_c("D:/MySQL_KHIIS_OUT/Completeness_Analysis.csv"),row.names=FALSE)
