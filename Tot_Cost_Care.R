@@ -11,9 +11,9 @@ file_string = '_Raw_Claim_Summ.csv'
 
 if(!exists("readClaimsData", mode="function")) source("readData.R")
 
-claims10 = readData(year_string='2010')
-claims11 = readData(year_string='2011')
-claims12 = readData(year_string='2012')
+claims10 = readClaimsData(year_string='2010')
+claims11 = readClaimsData(year_string='2011')
+claims12 = readClaimsData(year_string='2012')
 
 tmp = rbind(claims10,claims11,claims12)
 
