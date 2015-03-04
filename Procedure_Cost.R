@@ -38,39 +38,39 @@ mammo = rbind(mammo10,mammo11,mammo12)
 
 remove(colo10,colo11,colo12,hip10,hip11,hip12,gall10,gall11,gall12,mammo10,mammo11,mammo12)
 
-tmp = colo %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
+out = colo %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
 
 write.csv(out,str_c(base_path,"Colon_Cnty_",file_string),row.names=FALSE)
 
-tmp = colo %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
+out = colo %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
 
 write.csv(out,str_c(base_path,"Colon_State_",file_string),row.names=FALSE)
 
 ####################
-tmp = hip %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
+out = hip %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
 
 write.csv(out,str_c(base_path,"Hip_Cnty_",file_string),row.names=FALSE)
 
-tmp = hip %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
+out = hip %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
 
 write.csv(out,str_c(base_path,"Hip_State_",file_string),row.names=FALSE)
 
 #####################
 
-tmp = gall %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
+out = gall %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
 
 write.csv(out,str_c(base_path,"Gall_Cnty_",file_string),row.names=FALSE)
 
-tmp = gall %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
+out = gall %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
 
 write.csv(out,str_c(base_path,"Gall_State_",file_string),row.names=FALSE)
 
 #####################
 
-tmp = mammo %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
+out = mammo %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
 
 write.csv(out,str_c(base_path,"Gall_Cnty_",file_string),row.names=FALSE)
 
-tmp = mammo %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
+out = mammo %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
 
 write.csv(out,str_c(base_path,"Mammo_State_",file_string),row.names=FALSE)
