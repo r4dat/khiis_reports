@@ -57,6 +57,8 @@ readClaimsData = function(year_string){
   
 }
 
+
+#' @param procedure Hip,Gall,Mammo,Colo 
 readProcedureData = function(year_string,procedure){
   base_path = 'D:/MySQL_KHIIS_OUT/'
   file_string = '_Claim_Summ.csv'
@@ -65,5 +67,20 @@ readProcedureData = function(year_string,procedure){
   
   proc <- fread(str_c(base_path,year_string,'_',procedure,file_string), header = FALSE,na.strings = NULL,stringsAsFactors = FALSE,showProgress = TRUE,colClasses="character")
   
-  return(proc)
+  tmp = proc
+  remove(proc)
+  
+  setnames(tmp,c("uniqID","ClaimNumber","PatientDOB","county","PatientGenderCode","NAICNo","FirstDateOfService","LastdateOfService","DatePaid","Zipcode","ClaimReceived","diab","chf","copd","asthm","sumtotchg","sumtotallwd","sumtotpd","mbrsp","coord","PlanType","ProductType","SubmissionQtr","subyr"))
+  
+  tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
+  tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
+  tmp$sumtotpd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotpd)
+  tmp$mbrsp =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$mbrsp)
+  
+  ## Remove special case of negative numbers. .-8, .-1 etc.
+  tmp$mbrsp = gsub(pattern='^(\\.)(-)','-.0',tmp$mbrsp)
+  
+  tmp = tmp %>% mutate(TotCost=as.numeric(sumtotpd)+as.numeric(mbrsp))
+  
+  return(tmp)
 }
