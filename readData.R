@@ -70,7 +70,15 @@ readProcedureData = function(year_string,procedure){
   tmp = proc
   remove(proc)
   
+  ## Setname for gallbladder.
+  if(length(tmp)==15){
+  setnames(tmp,c("uniqID","PatientDOB","county","sumtotchg","sumtotallwd","sumtotpd","mbrsp","diab","chf","copd","asthm","coord","PlanType","ProductType","subyr"))
+  }
+
+  ## Setname for all except gallbladder.
+  if(length(tmp)==24){
   setnames(tmp,c("uniqID","ClaimNumber","PatientDOB","county","PatientGenderCode","NAICNo","FirstDateOfService","LastdateOfService","DatePaid","Zipcode","ClaimReceived","diab","chf","copd","asthm","sumtotchg","sumtotallwd","sumtotpd","mbrsp","coord","PlanType","ProductType","SubmissionQtr","subyr"))
+  }
   
   tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
   tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
