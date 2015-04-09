@@ -26,12 +26,12 @@ AS(
 SELECT 
   DISTINCT
   Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
-	ClaimNumber,
+  ClaimNumber,
 	Servicedate,
 	RevenueProcedureCode
 FROM khiisdetailflatfile
 WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
-AND PlanType NOT IN('5','6')
+AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 AND RevenueProcedureCode IN('47562','47563','47564')
 );
 
@@ -189,7 +189,7 @@ SELECT
     `SubmissionYear`
 FROM khiissummaryflatfile
 WHERE LastDateofService BETWEEN @YEAR_STR AND @YEAR_END
-AND PlanType NOT IN('5','6')
+AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS
@@ -267,7 +267,7 @@ AS (
 FROM
     temp_table
 	WHERE statename='Kansas'
-	AND PlanType NOT IN('5','6')
+	AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 	AND SubmissionYear=LEFT(@YEAR_STR,4)
 GROUP BY uniqID);
 
@@ -702,7 +702,7 @@ SELECT
     `SubmissionYear`
 FROM khiissummaryflatfile
 WHERE LastDateofService BETWEEN @YEAR_STR AND @YEAR_END
-AND PlanType NOT IN('5','6')
+AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS
@@ -780,7 +780,7 @@ AS (
 FROM
     temp_table
 	WHERE statename='Kansas'
-	AND PlanType NOT IN('5','6')
+	AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 	AND SubmissionYear=LEFT(@YEAR_STR,4)
 GROUP BY uniqID);
 
@@ -1215,7 +1215,7 @@ SELECT
     `SubmissionYear`
 FROM khiissummaryflatfile
 WHERE LastDateofService BETWEEN @YEAR_STR AND @YEAR_END
-AND PlanType NOT IN('5','6')
+AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS
@@ -1293,7 +1293,7 @@ AS (
 FROM
     temp_table
 	WHERE statename='Kansas'
-	AND PlanType NOT IN('5','6')
+	AND  PlanType NOT IN(‘5’,’6’) AND ProductType=‘1’
 	AND SubmissionYear=LEFT(@YEAR_STR,4)
 GROUP BY uniqID);
 
