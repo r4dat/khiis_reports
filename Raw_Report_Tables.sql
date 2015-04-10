@@ -27,7 +27,7 @@ SELECT
   DISTINCT
   Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
   ClaimNumber,
-	Servicedate,
+  Servicedate,
 	RevenueProcedureCode
 FROM khiisdetailflatfile
 WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
@@ -1389,7 +1389,7 @@ LINES TERMINATED BY '\n'
 
 SELECT 	
 	b.uniqID,
-	a.PatientDOB,
+	b.PatientDOB,
 	countynm as County,
     SUM(b.TotalCharges) as SmTotChg,
     SUM(b.TotalAllowed) as SmTotAllwd,
