@@ -42,13 +42,15 @@ readClaimsData = function(year_string){
   tmp = claims
   remove(claims)
   
-  tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
-  tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
-  tmp$sumtotpd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotpd)
-  tmp$mbrsp =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$mbrsp)
+## Comment out because SQL is now taking care of formats.  
   
-  ## Remove special case of negative numbers. .-8, .-1 etc.
-  tmp$mbrsp = gsub(pattern='^(\\.)(-)','-.0',tmp$mbrsp)
+#   tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
+#   tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
+#   tmp$sumtotpd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotpd)
+#   tmp$mbrsp =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$mbrsp)
+#   
+#   ## Remove special case of negative numbers. .-8, .-1 etc.
+#   tmp$mbrsp = gsub(pattern='^(\\.)(-)','-.0',tmp$mbrsp)
   
   tmp = tmp %>% mutate(TotCost=as.numeric(sumtotpd)+as.numeric(mbrsp))
   
@@ -80,13 +82,13 @@ readProcedureData = function(year_string,procedure){
   setnames(tmp,c("uniqID","ClaimNumber","PatientDOB","county","PatientGenderCode","NAICNo","FirstDateOfService","LastdateOfService","DatePaid","Zipcode","ClaimReceived","diab","chf","copd","asthm","sumtotchg","sumtotallwd","sumtotpd","mbrsp","coord","PlanType","ProductType","SubmissionQtr","subyr"))
   }
   
-  tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
-  tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
-  tmp$sumtotpd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotpd)
-  tmp$mbrsp =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$mbrsp)
-  
-  ## Remove special case of negative numbers. .-8, .-1 etc.
-  tmp$mbrsp = gsub(pattern='^(\\.)(-)','-.0',tmp$mbrsp)
+#   tmp$sumtotchg =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotchg)
+#   tmp$sumtotallwd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotallwd)
+#   tmp$sumtotpd =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$sumtotpd)
+#   tmp$mbrsp =gsub(pattern = '^(.*)(.{2})$','\\1.\\2',tmp$mbrsp)
+#   
+#   ## Remove special case of negative numbers. .-8, .-1 etc.
+#   tmp$mbrsp = gsub(pattern='^(\\.)(-)','-.0',tmp$mbrsp)
   
   tmp = tmp %>% mutate(TotCost=as.numeric(sumtotpd)+as.numeric(mbrsp))
   
