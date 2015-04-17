@@ -12,6 +12,8 @@ In all cases, the derived primary key (UniqID) is a concatenation of the followi
 
 Selections were constrained by ensuring Member, Summary, and Detail fields: Eligibility End Date, Last Date of Service, and Service Date respectively were within the yearly date range. E.g. 2010-01-01 to 2010-12-31.
 
+All uknown genders (PatientGenderCode=U) were removed.
+
 ####Utility Functions:
 
 * ElgMoMid: Takes the Member record's Eligibility Start Date, End Date, Submission Quarter, and the given year's date. 
@@ -59,7 +61,12 @@ Also LEFT JOINs on dentoptclaims and returns only records not found with dental 
 
 8. Temporary tables for specific procedures -- Hip Replacement, Colonoscopy etc. are then created based on CPT procedure codes in the Detail file. Only Major Med Plans are included. (PlnTyp!=5,6 and PrdTyp=1).
 
+####Summarized Table Outputs:
+1. *Year* Raw Members: Gives uniqID, Age Band, Patient Gender, County, Months Eligibility Band, Months Eligible, and submission year.
 
+2. *Year* Raw Claims: Combines summarized claims information (e.g yearly total of AllowedCharges) and county and eligibility band information from the Member records.
+
+3.
 
 ```
 summary(cars)
