@@ -5,7 +5,9 @@ date: "Friday, April 17, 2015"
 output: html_document
 ---
 
-###Programming Methodology for KHIIS Reports
+##Programming Methodology for KHIIS Reports
+
+### SQL
 
 ####Keys, Constraints, and Utility Functions:
 In all cases, the derived primary key (UniqID) is a concatenation of the following fields: MembershipID, PatientDOB, PatientGenderCode, and FamilyMembershipID.
@@ -61,18 +63,56 @@ Also LEFT JOINs on dentoptclaims and returns only records not found with dental 
 
 8. Temporary tables for specific procedures -- Hip Replacement, Colonoscopy etc. are then created based on CPT procedure codes in the Detail file. Only Major Med Plans are included. (PlnTyp!=5,6 and PrdTyp=1).
 
-####Summarized Table Outputs:
+####Aggregated Outputs - Modular_Report_Call:
 1. *Year* Raw Members: Gives uniqID, Age Band, Patient Gender, County, Months Eligibility Band, Months Eligible, and submission year.
 
 2. *Year* Raw Claims: Combines summarized claims information (e.g yearly total of AllowedCharges) and county and eligibility band information from the Member records.
 
-3.
+3. *Year* *Procedure* Claims: Procedure level claim summaries are created by combining the previously created procedure tables with subset Summary table yearlytable. Summary claims are selected by claim or date range and then grouped by uniqID and summed to get a total incident cost-of-care measure. 
 
-```
-summary(cars)
-```
 
-```
-plot(cars)
-```
+### R
 
+####Libraries:
+data.table, lubridate, dplyr, stringr, assertthat, reshape2.
+
+####Definition:
+In our calculations Average Total Cost is defined as the sum of total paid charges and member responsiblity for all members of the group divided by the sum of group member months divided by twelve or for each group SUM(TotPd+Mbrsp)/(SUM(MembMo)/12). If the sum of member months was 0, the square root of the group size was used instead or SUM(TotPd+Mbrsp)/sqrt(Group Size).
+
+####Utility and Helper Functions:
+All reading functions have a hard-coded base path and file name suffix. E.g.
+````
+base_path = 'D:/MySQL_KHIIS_OUT/'
+file_name_suffix = '_Raw_Members.csv'
+````
+
+Source: readData.r
+Functions:
+
+ * readMembersData(Year) - Read in members data, set header/column names appropriately.
+ * readClaimsData(Year) - Read in claims data, set header/column names, create "TotCost" variable which is the sum of Total Allowed Charges and Member Responsibility.
+ * readProcedureData(Year,Procedure) - Read in Procedure data, set names, create "TotCost" variable. Procedure must be one of: Hip,Gall,Mammo or Colo.
+ 
+Soure: PopEst.R
+Functions: Reads in and calculates adjusted population for each county based on yearly estimated population - general quarters population. See file for details on census file used.
+ 
+#### Final Report Generation:
+
+1. Membership Analysis  
+Source: Membership_Analysis.R   
+Reads member data and creates counts and summaries based on grouping by age band, eligibility band, county, gender, and year. Fills any missing variable combinations with 0's and writes to disk. Also creates Completeness estimates by calculating percent of estimated county population that is found within KHIIS member file. Assigns to quartiles C1 - C4 and writes to disk. 
+
+
+2.Total Cost of Care  
+Source: Tot_Cost_Care.R  
+Creates full data frame of claims data for all years. Groups data by gender, county, age band, eligibiity band, and year.
+For each group, calculates median TotCost and average TotCost. Any missing group combination is created and filled with 0s.
+The table is written to disk. Subsequent variations omit certain groups in order to derive other tables -- e.g. median cost of care in a county and year without splitting by gender.
+
+3. Diagnosis Cost of Care  
+Source: Diagnosis_Cost_Care.R, Diagnosis_gndrVars_Cost_Care.R  
+Follows the same pattern as Total Cost of Care with groupings on Disease binary variables. Calculates median and average cost of care with disease groupings. The gendered version is not currently used as it identifies individuals too specifically.
+
+4. Procedure Cost of care  
+Source: Procedure_Cost.R  
+Follows Total Cost of Care pattern reading in procedure based tables and returning median and mean cost of care for various groupings.
