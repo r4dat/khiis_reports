@@ -39,13 +39,9 @@ Months > 12   | 10-12
 ####Temporary Table Generation ReportProc(Year_Start='YYYYMMDD',Year_End='YYYYMMDD'):
 Temporary table generation is in a stored procedure (ReportProc) accepting date bounds (year start, and year end).
 
-1. Table dentoptclaims: Created in order to later remove dental and vision claims since not all plans provide such coverage. 
-  * Fields: uniqID, ClaimNumber, and Servicedate. 
-  * Derived from Detail file, and filtered on Provider Specialty and Taxonomy codes. See Appendix A (pg 230) and Appendix C (Pgs 249,252-3) of the Data Dictionary. (4th Ed.)
+1. Table dentoptclaims: Created in order to later remove dental and vision claims since not all plans provide such coverage. Derived from Detail file, and filtered on Provider Specialty and Taxonomy codes. See Appendix A (pg 230) and Appendix C (Pgs 249,252-3) of the Data Dictionary. (4th Ed.)
 
-2. Table adjclaims: Created in order to later remove any claims with positive or negative adjustments. 
-  * Fields: uniqID, ClaimNumber, Servicedate, ClaimActionType, PlanType, ProductType.
-  * Derived from Detail file, filtered on ClaimAction adjustments NA and PA.
+2. Table adjclaims: Created in order to later remove any claims with positive or negative adjustments. Derived from Detail file, selecting all records with ClaimAction adjustments NA and PA.
   
 3. Table tempyearlytable: An intermediate table to subset Summary Claims to be within year bounds and excludes supplementary and ancillary plans based on Plan Type and Product Type fields. (PlnTyp!=5,6 and PrdTyp=1).
 
@@ -93,7 +89,7 @@ Functions:
  * readClaimsData(Year) - Read in claims data, set header/column names, create "TotCost" variable which is the sum of Total Allowed Charges and Member Responsibility.
  * readProcedureData(Year,Procedure) - Read in Procedure data, set names, create "TotCost" variable. Procedure must be one of: Hip,Gall,Mammo or Colo.
  
-Soure: PopEst.R
+Soure: PopEst.R  
 Functions: Reads in and calculates adjusted population for each county based on yearly estimated population - general quarters population. See file for details on census file used.
  
 #### Final Report Generation:
