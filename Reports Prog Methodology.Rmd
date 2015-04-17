@@ -1,0 +1,71 @@
+---
+title: "Reports Methodology"
+author: "Rob R"
+date: "Friday, April 17, 2015"
+output: html_document
+---
+
+###Programming Methodology for KHIIS Reports
+
+####Keys, Constraints, and Utility Functions:
+In all cases, the derived primary key (UniqID) is a concatenation of the following fields: MembershipID, PatientDOB, PatientGenderCode, and FamilyMembershipID.
+
+Selections were constrained by ensuring Member, Summary, and Detail fields: Eligibility End Date, Last Date of Service, and Service Date respectively were within the yearly date range. E.g. 2010-01-01 to 2010-12-31.
+
+####Utility Functions:
+
+* ElgMoMid: Takes the Member record's Eligibility Start Date, End Date, Submission Quarter, and the given year's date. 
+ Tests for date reversal (start > end) and fixes if needed. Returns a count of months covered in the quarter. (Covered is defined as having coverage as of the 15th of the month.)
+ 
+* age_band: Takes Date of Birth (PatientDOB), and Year Start Date.
+Calculates age as of January 1 of given year and returns age-band assignment of 0-18, 19-64, and 65+.
+
+* elg_band: Takes a sum of covered months and returns the eligibility band. 
+
+ Count Months | Band
+--------------|------
+Months < 1    | 0
+Months < 4    | 1-3
+Months < 7    | 4-6
+Months < 10   | 7-9
+Months < 12   | 10-12
+Months > 12   | 10-12
+
+
+####Temporary Table Generation ReportProc(Year_Start='YYYYMMDD',Year_End='YYYYMMDD'):
+Temporary table generation is in a stored procedure (ReportProc) accepting date bounds (year start, and year end).
+
+1. Table dentoptclaims: Created in order to later remove dental and vision claims since not all plans provide such coverage. 
+  * Fields: uniqID, ClaimNumber, and Servicedate. 
+  * Derived from Detail file, and filtered on Provider Specialty and Taxonomy codes. See Appendix A (pg 230) and Appendix C (Pgs 249,252-3) of the Data Dictionary. (4th Ed.)
+
+2. Table adjclaims: Created in order to later remove any claims with positive or negative adjustments. 
+  * Fields: uniqID, ClaimNumber, Servicedate, ClaimActionType, PlanType, ProductType.
+  * Derived from Detail file, filtered on ClaimAction adjustments NA and PA.
+  
+3. Table tempyearlytable: An intermediate table to subset Summary Claims to be within year bounds and excludes supplementary and ancillary plans based on Plan Type and Product Type fields. (PlnTyp!=5,6 and PrdTyp=1).
+
+4. Table yearlytable: Uses intermediate table above and appends binary diagnosis indicators for Diabetes, CHF, COPD, and Asthma.
+E.g.  
+````IF((PrimaryDiagnosis REGEXP '^250.*')|(SecondaryDiagnosis REGEXP '^250.*')|(ThirdDiagnosis REGEXP '^250.*'),1,0) as 'diab'
+````
+Also LEFT JOINs on dentoptclaims and returns only records not found with dental and vision claims.
+
+5. Table tempmemb: An intermediate table subsetting the Member file to be within year bounds. Also calls age_band and ElgMoMid functions to calculate member age and coverage based on quarter. Joins Member Zipcode (Truncated at 5 digits) with Zipcode table to return County. 
+
+6. Table memb_summ: Table summarizing the tempmemb table to get a total sum of months per member, and filter by state, plan and product type.
+
+7. Table claim_summ: Table summarizes previous yearly table. E.g. calls MAX(diab), and SUM(TotalCharges) with GROUP BY uniqID to get a single member record with diagnosis variables and an aggregate charges over the year. The yearlytable is LEFT JOINed with the adjusted claims table (adjclaims) on uniqID and either Claim Number or if Detail Service Date is within Summary's First and Last Date of Service. Claims matched in the adjclaims table are removed.
+
+8. Temporary tables for specific procedures -- Hip Replacement, Colonoscopy etc. are then created based on CPT procedure codes in the Detail file. Only Major Med Plans are included. (PlnTyp!=5,6 and PrdTyp=1).
+
+
+
+```
+summary(cars)
+```
+
+```
+plot(cars)
+```
+
