@@ -74,7 +74,7 @@ readProcedureData = function(year_string,procedure){
   
   ## Setname for gallbladder.
   if(length(tmp)==15){
-  setnames(tmp,c("uniqID","PatientDOB","county","sumtotchg","sumtotallwd","sumtotpd","mbrsp","diab","chf","copd","asthm","coord","PlanType","ProductType","subyr"))
+  setnames(tmp,c("uniqID","PatientDOB","county","diab","chf","copd","asthm","sumtotchg","sumtotallwd","sumtotpd","mbrsp","coord","PlanType","ProductType","subyr"))
   }
 
   ## Setname for all except gallbladder.
