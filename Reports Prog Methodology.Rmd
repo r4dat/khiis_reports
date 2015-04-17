@@ -2,7 +2,7 @@
 title: "Reports Methodology"
 author: "Rob R"
 date: "Friday, April 17, 2015"
-output: html_document
+output: word_document
 ---
 
 ##Programming Methodology for KHIIS Reports
