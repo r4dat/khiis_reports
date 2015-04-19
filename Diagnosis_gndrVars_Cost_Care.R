@@ -74,7 +74,8 @@ year=unique(out$subyr)
 fill=expand.grid(gndr,age,diab,year,stringsAsFactors=FALSE)
 setnames(fill,c("gender","ageband","diab","subyr"))
 
-assert_that(nrow(fill)==18)
+## 2 * 3 * 2 * 3
+assert_that(nrow(fill)==36)
 
 out = full_join(out,fill)
 # Replace Empty NA's with 0's.
