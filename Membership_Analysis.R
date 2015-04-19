@@ -29,6 +29,7 @@ yr=unique(out$subyr)
 fill=expand.grid(gndr,cnty,age,elg,yr,stringsAsFactors=FALSE)
 setnames(fill,c("gender","county","ageband","elgband","subyr"))
 
+## Expect 2 * 105 * 3 * 5 * 3
 assert_that(nrow(fill)==9450)
 
 out = full_join(out,fill)
