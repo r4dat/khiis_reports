@@ -1,9 +1,8 @@
 ## Run All
 rm(list = setdiff(ls(), lsf.str()))
 source("Diagnosis_Cost_Care.R")
-## Too much detail?
-##rm(list = setdiff(ls(), lsf.str()))
-## source("Diagnosis_gndrVars_Cost_Care.R")
+rm(list = setdiff(ls(), lsf.str()))
+source("Diagnosis_gndrVars_Cost_Care.R")
 rm(list = setdiff(ls(), lsf.str()))
 source("Membership_Analysis.R")
 rm(list = setdiff(ls(), lsf.str()))
