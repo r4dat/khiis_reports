@@ -19,7 +19,7 @@ StateEst = COEST13 %>% filter(STNAME=='Kansas',CTYNAME!='Kansas') %>%
 StateEst$CTYNAME=gsub(' County','',StateEst$CTYNAME)
 
 ## Make Long
-StateEst=melt(StateEst)
+StateEst=melt(StateEst,id.vars = "CTYNAME")
 ## Create Year var from variable name.
 StateEst = StateEst %>% mutate(year=str_extract(variable,'20\\d\\d'))
 ## Remove year from variable name.
