@@ -304,7 +304,9 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND RevenueProcedureCode IN('G0104','G0105','G0121','45378','45330','45335','45380')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0104' , 'G0105','G0121',
+        '45300','45305','45308','45309','45315','45317','45320','45330','45331','45333',
+        '45334','45335','45338','45339','45378','45380','45382','45383','45384','45385')
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
