@@ -2,7 +2,7 @@
 title: "Reports Methodology"
 author: "Rob R"
 date: "Friday, April 17, 2015"
-output: html_document
+output: word_document
 ---
 
 ##Programming Methodology for KHIIS Reports
@@ -97,9 +97,9 @@ ENGINE=InnoDB
 AS(
 SELECT 
   Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
-	 ClaimNumber,
-   ...,
-   ...
+	ClaimNumber,
+  ...,
+  ...
 FROM khiissummaryflatfile
 WHERE LastDateofService BETWEEN @YEAR_STR AND @YEAR_END
 AND  PlanType NOT IN('5','6') AND ProductType='1'
