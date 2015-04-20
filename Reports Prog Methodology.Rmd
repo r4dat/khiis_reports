@@ -42,32 +42,284 @@ Months > 12   | 10-12
 Temporary table generation is in a stored procedure (ReportProc) accepting date bounds (year start, and year end).
 
 1. Table dentoptclaims: Created in order to later remove dental and vision claims since not all plans provide such coverage. Derived from Detail file, and filtered on Provider Specialty and Taxonomy codes. See Appendix A (pg 230) and Appendix C (Pgs 249,252-3) of the Data Dictionary. (4th Ed.)
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  dentoptclaims ( INDEX(uniqID,ClaimNumber) ) 
+ENGINE=InnoDB 
+AS(
+SELECT 
+  DISTINCT
+	Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+	ClaimNumber,
+	Servicedate
+FROM khiisdetailflatfile
+WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
+AND 
+(ProviderSpecialtyCode IN('DTA','DTH','DTL','DENT','OPH','OPT','OD','OTT')
+OR 
+TaxonomyCode IN('126800000X', '124Q00000X', '126900000X', '1223D0001X', 
+'122300000X', '1223E0200X', '1223G0001X', '1223P0106X', '1223X0008X', 
+'1223S0112X', '1223X0400X', '1223P0221X', '1223P0300X', '1223P0700X', '122400000X',
+'152WC0802X','152WL0500X', '152WX0102X','152W00000X', '152WP0200X', 
+'152WS0006X', '152WV0400X','156FC0800X', '156FC0801X', '156FX1700X', 
+'156FX1100X', '156FX1101X', '156FX1800X', '156FX1201X', '156FX1202X', 
+'156FX1900X','156F00000X')
+)
+);
+```
 
 2. Table adjclaims: Created in order to later remove any claims with positive or negative adjustments. Derived from Detail file, selecting all records with ClaimAction adjustments NA and PA.
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  adjclaims ( INDEX(uniqID,ClaimNumber,ServiceDate) ) 
+ENGINE=InnoDB 
+AS(
+SELECT 
+  DISTINCT
+	Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+	ClaimNumber,
+	Servicedate,
+	ClaimActionType, PlanType,ProductType
+FROM khiisdetailflatfile
+WHERE (
+		(Servicedate BETWEEN @YEAR_STR AND @YEAR_END) 
+		AND 
+		(ClaimActionType IN('NA','PA'))
+	 )
+);
+```
   
 3. Table tempyearlytable: An intermediate table to subset Summary Claims to be within year bounds and excludes supplementary and ancillary plans based on Plan Type and Product Type fields. (PlnTyp!=5,6 and PrdTyp=1).
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  tempyearlytable ( INDEX(uniqID,ClaimNumber) ) 
+ENGINE=InnoDB 
+AS(
+SELECT 
+  Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+	 ClaimNumber,
+   ...,
+   ...
+FROM khiissummaryflatfile
+WHERE LastDateofService BETWEEN @YEAR_STR AND @YEAR_END
+AND  PlanType NOT IN('5','6') AND ProductType='1'
+);
+```
 
 4. Table yearlytable: Uses intermediate table above and appends binary diagnosis indicators for Diabetes, CHF, COPD, and Asthma.
-E.g.  
-````IF((PrimaryDiagnosis REGEXP '^250.*')|(SecondaryDiagnosis REGEXP '^250.*')|(ThirdDiagnosis REGEXP '^250.*'),1,0) as 'diab'
-````
 Also LEFT JOINs on dentoptclaims and returns only records not found with dental and vision claims.
+````
+CREATE TEMPORARY TABLE IF NOT EXISTS
+yearlytable ( INDEX(uniqID,ClaimNumber,FirstDateOfService,LastdateOfService) ) 
+ENGINE=InnoDB 
+AS(
+  SELECT a.*,
+  IF((PrimaryDiagnosis REGEXP '^250.*')|(SecondaryDiagnosis REGEXP '^250.*')|(ThirdDiagnosis REGEXP '^250.*'),1,0) as 'diab',
+  ...,
+  ....
+  FROM tempyearlytable as a
+	LEFT JOIN dentoptclaims as b
+	ON 	(a.uniqID = b.uniqID
+		AND 
+		a.ClaimNumber= b.ClaimNumber
+		)
+	WHERE b.ClaimNumber IS NULL
+    );
+````
 
 5. Table tempmemb: An intermediate table subsetting the Member file to be within year bounds. Also calls age_band and ElgMoMid functions to calculate member age and coverage based on quarter. Joins Member Zipcode (Truncated at 5 digits) with Zipcode table to return County. 
 
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  tempmemb ( INDEX(uniqID) ) 
+ENGINE=InnoDB 
+AS (
+  SELECT 
+    NAICNO,
+    Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+    ...,
+    age_band(khiismemberflatfile.PatientDOB, @YEAR_STR) as AgeBand,
+    ...,
+    LEFT(TRIM(khiismemberflatfile.Zipcode),5) as 'fivezip',
+	  b.countynm,
+	  b.statename,
+    ...,
+    ElgMoMid(khiismemberflatfile.EligibilityStartDate,
+            khiismemberflatfile.EligibilityEndDate,
+            khiismemberflatfile.SubmissionQtr,@YEAR_STR) as ElgMoMid,
+    ...,
+    ...
+    FROM
+    khiis.khiismemberflatfile
+	LEFT JOIN zip as b
+	ON(LEFT(TRIM(khiismemberflatfile.Zipcode),
+        5)=b.zip)
+  WHERE
+    EligibilityEndDate BETWEEN @YEAR_STR AND @YEAR_END   
+);
+```
+
 6. Table memb_summ: Table summarizing the tempmemb table to get a total sum of months per member, and filter by state, plan and product type.
+
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  memb_summ ( INDEX(uniqID) ) 
+ENGINE=InnoDB 
+AS (
+  SELECT 
+  uniqID,
+	...,
+  
+  SUM(ElgMoMid) as SmElgMoMid,
+  ...,
+  ...
+  FROM
+    tempmemb
+	WHERE statename='Kansas'
+	AND  PlanType NOT IN('5','6') AND ProductType='1'
+	AND SubmissionYear=LEFT(@YEAR_STR,4)
+GROUP BY uniqID);
+```
 
 7. Table claim_summ: Table summarizes previous yearly table. E.g. calls MAX(diab), and SUM(TotalCharges) with GROUP BY uniqID to get a single member record with diagnosis variables and an aggregate charges over the year. The yearlytable is LEFT JOINed with the adjusted claims table (adjclaims) on uniqID and either Claim Number or if Detail Service Date is within Summary's First and Last Date of Service. Claims matched in the adjclaims table are removed.
 
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  claim_summ ( INDEX(uniqID,FirstDateOfService,LastdateOfService) ) 
+ENGINE=InnoDB 
+AS (SELECT 
+    yearlytable.uniqID,
+    ...,
+    MAX(diab) as diab,
+	  MAX(chf) as chf,
+	  MAX(copd) as copd,
+	  MAX(asthm) as asthm,
+    CONVERT(SUM(yearlytable.TotalCharges)/100,Decimal(11,2)) as SmTotChg,
+    CONVERT(SUM(yearlytable.TotalAllowed)/100,Decimal(11,2)) as SmTotAllwd,
+    CONVERT(SUM(yearlytable.TotalPaid)/100,Decimal(11,2)) as SmTotPd,
+    CONVERT(SUM(yearlytable.MemberResponsibility)/100,Decimal(11,2)) as MbrRsp,
+    ...,
+    ...
+    FROM
+    khiis.yearlytable
+        LEFT JOIN
+    adjclaims as b ON (
+		yearlytable.uniqID = b.uniqId
+        AND yearlytable.PlanType = b.PlanType
+        AND (
+				(yearlytable.Claimnumber=b.ClaimNumber) OR 
+				(b.servicedate BETWEEN yearlytable.FirstDateOfService AND yearlytable.LastDateOfService)
+			)
+	)
+    WHERE
+        b.ClaimNumber IS NULL
+GROUP BY uniqID);
+```
+
 8. Temporary tables for specific procedures -- Hip Replacement, Colonoscopy etc. are then created based on CPT procedure codes in the Detail file. Only Major Med Plans are included. (PlnTyp!=5,6 and PrdTyp=1).
+
+```
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+  gallbladder ( INDEX(uniqID,ClaimNumber) ) 
+ENGINE=InnoDB 
+AS(
+SELECT 
+  DISTINCT
+  Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+  ClaimNumber,
+  Servicedate,
+	RevenueProcedureCode
+FROM khiisdetailflatfile
+WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
+AND  PlanType NOT IN('5','6') AND ProductType='1'
+AND RevenueProcedureCode IN('47562','47563','47564')
+);
+```
 
 ####Aggregated Outputs - Modular_Report_Call:
 1. *Year* Raw Members: Gives uniqID, Age Band, Patient Gender, County, Months Eligibility Band, Months Eligible, and submission year.
 
+```
+SELECT 
+    uniqID,
+    AgeBand,
+    PatientGenderCode as Gender,
+    countynm as County,
+    elg_band(SmElgMoMid) as ElgBand,
+    SmElgMoMid,
+    SubmissionYear
+FROM
+    memb_summ
+WHERE PatientGenderCode IN ('M','F')
+ORDER BY countynm
+
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Raw_Members.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+;
+```
+
+
 2. *Year* Raw Claims: Combines summarized claims information (e.g yearly total of AllowedCharges) and county and eligibility band information from the Member records.
+
+```
+SELECT 
+    a.uniqID,
+    AgeBand,
+    a.PatientGenderCode,
+	  countynm AS County,
+    elg_band(SmElgMoMid) as ElgBand,
+	  SmElgMoMid as MembMo,
+	  SmTotChg,
+    SmTotAllwd,
+    SmTotPd,
+	  MbrRsp,
+	  diab,
+	  chf,
+	  copd,
+	  asthm,
+	  a.SubmissionYear
+	
+FROM
+    memb_summ as a JOIN claim_summ as b ON
+	(a.uniqID=b.uniqID)
+WHERE a.PatientGenderCode IN ('M','F')
+
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Raw_Claim_Summ.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+```
 
 3. *Year* *Procedure* Claims: Procedure level claim summaries are created by combining the previously created procedure tables with subset Summary table yearlytable. Summary claims are selected by claim or date range and then grouped by uniqID and summed to get a total incident cost-of-care measure. 
 
+```
+SELECT   
+	b.uniqID,
+  ...,
+  MAX(diab) as diab,
+	MAX(chf) as chf,
+	MAX(copd) as copd,
+	MAX(asthm) as asthm,
+  CONVERT(SUM(b.TotalCharges)/100,Decimal(11,2)) as SmTotChg,
+  CONVERT(SUM(b.TotalAllowed)/100,Decimal(11,2)) as SmTotAllwd,
+  CONVERT(SUM(b.TotalPaid)/100,Decimal(11,2)) as SmTotPd,
+  CONVERT(SUM(b.MemberResponsibility)/100,Decimal(11,2)) as MbrRsp,
+  ...,
+  ...
+  FROM gallbladder as a LEFT JOIN yearlytable as b ON a.uniqID=b.uniqID
+AND 
+(
+ (a.servicedate between b.FirstDateofService and b.LastDateofService)
+)
+JOIN memb_summ as c ON a.uniqID=c.uniqID
+WHERE b.PatientGenderCode IN ('M','F')
+GROUP BY b.uniqID
+
+INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Gallbladder_Claim_Summ.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+;
+```
 
 ### R
 
@@ -116,7 +368,7 @@ E.g. assume all calims have been read in and put in a table or dataframe 'tmp' f
 ```{r,eval=FALSE}
 tmp %>% group_by(gender,county,ageband,elgband,subyr) %>% 
 ```
-The result is passed or piped to the summarise verb which splits by the cartesian cross-product of all selected grouping vriables E.g. M, Johnson County, 0-19, 1-3, 2010 etc. On each grouping it creates new columns based on the calculation functions
+The result is passed or piped to the summarise verb which splits by the cartesian product of all selected grouping vriables E.g. M, Johnson County, 0-19, 1-3, 2010 etc. On each grouping it creates new columns based on the calculation functions
 passed.
 ```{r,eval=FALSE}
   summarise(Med = median(TotCost),
@@ -127,7 +379,7 @@ passed.
                     ),
             ClassTotal=sum(TotCost),ClassMemMo=sum(membmo),ClassSize=n())
 ```
-The above lines calculate the median per grouping of total cost "Med", as well as an Average total cost "AvgTot". The ifelse performs the Average Total calculation as previously described and takes the form IF(Test,TRUE,FALSE). The "n()" returns the number of rows/entries in the given grouping. (A number of variable type-casts have been removed for readability.) 
+The above lines calculate the median per grouping of total cost "Med", as well as an Average total cost "AvgTot". The ifelse performs the Average Total calculation as previously described and is a shortened form of IF(TRUE) THEN do A, ELSE do B. The "n()" returns the number of rows/entries in the given grouping. (A number of variable type-casts have been removed for readability.) 
 
 3. Diagnosis Cost of Care  
 Source: Diagnosis_Cost_Care.R, Diagnosis_gndrVars_Cost_Care.R  
