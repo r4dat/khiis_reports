@@ -10,7 +10,7 @@ output: html_document
 ### SQL
 
 ####Keys, Constraints, and Utility Functions:
-The "Raw Report Tables" file has been left intact for testing purposes. Use the modular form in production, notably field ordering for gallbladder procedure tables differ between the two versions, and down-stream processing relies on the newer ordering within Modular_Report_Call.
+The "Raw Report Tables" file has been left intact for testing purposes. Use the modular for m in production, notably field ordering for gallbladder procedure tables differ between the two versions, and down-stream processing relies on the newer ordering within Modular_Report_Call.
 
 In all cases, the derived primary key (UniqID) is a concatenation of the following fields: MembershipID, PatientDOB, PatientGenderCode, and FamilyMembershipID.
 
