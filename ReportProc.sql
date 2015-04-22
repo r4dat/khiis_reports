@@ -1,10 +1,10 @@
 -- --------------------------------------------------------------------------------
-  -- Routine DDL
+-- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
-  DELIMITER $$
-  
-  CREATE DEFINER=`user`@`localhost` PROCEDURE `ReportProc`(IN year_start char(8), IN year_end char(8))
+DELIMITER $$
+
+CREATE DEFINER=`user`@`localhost` PROCEDURE `ReportProc`(IN year_start char(8), IN year_end char(8))
 BEGIN
 SET @YEAR_STR=year_start;
 SET @YEAR_END=year_end;
@@ -142,7 +142,7 @@ AS(
   IF((PrimaryDiagnosis REGEXP '^493.*')|(SecondaryDiagnosis REGEXP '^493.*')|(ThirdDiagnosis REGEXP '^493.*'),1,0) as 'asthm'
   FROM tempyearlytable as a
   LEFT JOIN dentoptclaims as b
-  ON 	(a.uniqID = b.uniqID
+  ON   (a.uniqID = b.uniqID
        AND 
        a.ClaimNumber= b.ClaimNumber
   )
@@ -271,7 +271,7 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND RevenueProcedureCode IN('47562','47563','47564')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('47562','47563','47564')
 );
 
 
@@ -288,7 +288,7 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND RevenueProcedureCode IN('27125','27130','27131','27132','27134','27135','27136','27137','27138')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('27130','27132')
 );
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
@@ -322,7 +322,7 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND RevenueProcedureCode IN('G020','G0204','77052','77051','77057','77056')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0202','G0204','77052','77051','77057','77056')
 );
 #
 #End Procedure Table Creation.
