@@ -7,7 +7,7 @@ SELECT
     countynm as County,
     elg_band(SmElgMoMid) as ElgBand,
   SmElgMoMid,
-	SubmissionYear
+  SubmissionYear
 FROM
     memb_summ
 WHERE PatientGenderCode IN ('M','F')
@@ -152,9 +152,6 @@ AND
 )
 JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
-AND b.PrimaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.SecondaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.ThirdDiagnosis IN ('V7651' , 'V160', 'V1272')
 GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2012_Colonoscopy_Claim_Summ.csv'
@@ -353,9 +350,6 @@ AND
 )
 JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
-AND b.PrimaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.SecondaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.ThirdDiagnosis IN ('V7651' , 'V160', 'V1272')
 GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2011_Colonoscopy_Claim_Summ.csv'
@@ -545,9 +539,6 @@ AND
 )
 JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
-AND b.PrimaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.SecondaryDiagnosis IN ('V7651' , 'V160', 'V1272')
-        OR b.ThirdDiagnosis IN ('V7651' , 'V160', 'V1272')
 GROUP BY b.uniqID
 
 INTO OUTFILE 'D:\\MySQL_KHIIS_OUT\\2010_Colonoscopy_Claim_Summ.csv'
