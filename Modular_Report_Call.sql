@@ -74,7 +74,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -112,7 +111,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -150,7 +148,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -187,7 +184,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -272,7 +268,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -348,7 +343,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -385,7 +379,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -461,7 +454,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -499,7 +491,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -537,7 +528,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
@@ -574,7 +564,6 @@ AND
 (
  (a.servicedate between b.FirstDateofService and b.LastDateofService)
 )
-JOIN memb_summ as c ON a.uniqID=c.uniqID
 WHERE b.PatientGenderCode IN ('M','F')
 GROUP BY b.uniqID
 
