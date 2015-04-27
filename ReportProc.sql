@@ -258,6 +258,7 @@ AS (SELECT
 # Create temporary procedure tables.
 #
 #
+-- Outpatient Laparoscopic Cholecystectomy; outpatient.
 CREATE TEMPORARY TABLE IF NOT EXISTS 
 gallbladder ( INDEX(uniqID,ClaimNumber) ) 
 ENGINE=InnoDB 
@@ -271,7 +272,7 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('47562','47563','47564')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('47562','47563', '47564')
 );
 
 
@@ -288,9 +289,10 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('27130','27132')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('27130','27132','27134')
 );
 
+-- Screening Colonoscopy.
 CREATE TEMPORARY TABLE IF NOT EXISTS 
 colonoscopy ( INDEX(uniqID,ClaimNumber) ) 
 ENGINE=InnoDB 
@@ -304,10 +306,29 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0104' , 'G0105','G0121',
-        '45300','45305','45308','45309','45315','45317','45320','45330','45331','45333',
-        '45334','45335','45338','45339','45378','45380','45382','45383','45384','45385')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0104' , 'G0105','G0121','45330','45378')
 );
+
+-- Colonoscopy screening to diagnosis (e.g. benign polyp)
+CREATE TEMPORARY TABLE IF NOT EXISTS 
+colonoscopydiag ( INDEX(uniqID,ClaimNumber) ) 
+ENGINE=InnoDB 
+AS(
+  SELECT 
+  DISTINCT
+  Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
+  ClaimNumber,
+  Servicedate,
+  RevenueProcedureCode
+  FROM khiisdetailflatfile
+  WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
+  AND  PlanType NOT IN('5','6') AND ProductType='1'
+  AND (LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45331 AND 45345 
+  OR LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45379 AND 45392
+    )  
+);
+
+
 
 CREATE TEMPORARY TABLE IF NOT EXISTS 
 mammo ( INDEX(uniqID,ClaimNumber) ) 
@@ -322,7 +343,7 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0202','G0204','77052','77051','77057','77056')
+  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0202','77057')
 );
 #
 #End Procedure Table Creation.
