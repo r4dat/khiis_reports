@@ -306,27 +306,16 @@ AS(
   FROM khiisdetailflatfile
   WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
   AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND LEFT(LTRIM(RevenueProcedureCode),5) IN('G0104' , 'G0105','G0121','45330','45378')
+  AND 
+    LEFT(LTRIM(RevenueProcedureCode),5) IN('G0104' , 'G0105','G0121','45330','45378')
+ OR 
+ (
+LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45331 AND 45345 
+OR LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45379 AND 45392
+  )  
 );
 
--- Colonoscopy screening to diagnosis (e.g. benign polyp)
-CREATE TEMPORARY TABLE IF NOT EXISTS 
-colonoscopydiag ( INDEX(uniqID,ClaimNumber) ) 
-ENGINE=InnoDB 
-AS(
-  SELECT 
-  DISTINCT
-  Concat(MembershipID,PatientDOB,PatientGenderCode,FamilyMembershipID) as uniqID,
-  ClaimNumber,
-  Servicedate,
-  RevenueProcedureCode
-  FROM khiisdetailflatfile
-  WHERE Servicedate BETWEEN @YEAR_STR AND @YEAR_END 
-  AND  PlanType NOT IN('5','6') AND ProductType='1'
-  AND (LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45331 AND 45345 
-  OR LEFT(LTRIM(RevenueProcedureCode),5) BETWEEN 45379 AND 45392
-    )  
-);
+
 
 
 
