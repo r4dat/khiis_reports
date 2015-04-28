@@ -130,7 +130,7 @@ year=unique(out$subyr)
 fill=expand.grid(gndr,cnty,age,diab,year,stringsAsFactors=FALSE)
 setnames(fill,c("gender","county","ageband","asthm","subyr"))
 
-assert_that(nrow(fill)==1260)
+assert_that(nrow(fill)==3780)
 
 out = full_join(out,fill)
 # Replace Empty NA's with 0's.
