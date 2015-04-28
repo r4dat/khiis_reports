@@ -32,7 +32,7 @@ mammo12 = readProcedureData(year_string = 2012,procedure = "Mammo")
 
 colo = rbind(colo10,colo11,colo12)
 hip = rbind(hip10,hip11,hip12)
-## Make up for mis-matched columsn with fill=TRUE
+## Make up for mis-matched columns with fill=TRUE
 gall = rbind(gall10,gall11,gall12,fill=TRUE)
 mammo = rbind(mammo10,mammo11,mammo12)
 
@@ -69,7 +69,7 @@ write.csv(out,str_c(base_path,"Gall_State_",file_string),row.names=FALSE)
 
 out = mammo %>% group_by(county,subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(county,subyr)
 
-write.csv(out,str_c(base_path,"Gall_Cnty_",file_string),row.names=FALSE)
+write.csv(out,str_c(base_path,"Mammo_Cnty_",file_string),row.names=FALSE)
 
 out = mammo %>% group_by(subyr) %>% summarise(median=median(TotCost),AvgTot=mean(TotCost),ClassSize=n()) %>% arrange(subyr)
 
