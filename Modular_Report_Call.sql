@@ -19,7 +19,7 @@ LINES TERMINATED BY '\n'
 ;
 
 SELECT 
-	a.uniqID,
+  a.uniqID,
     AgeBand,
     a.PatientGenderCode,
 	countynm AS County,
