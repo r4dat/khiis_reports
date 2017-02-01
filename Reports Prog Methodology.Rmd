@@ -16,7 +16,7 @@ In all cases, the derived primary key (UniqID) is a concatenation of the followi
 
 Selections were constrained by ensuring Member, Summary, and Detail fields: Eligibility End Date, Last Date of Service, and Service Date respectively were within the yearly date range. E.g. 2010-01-01 to 2010-12-31.
 
-All uknown genders (PatientGenderCode=U) were removed.
+All uknown genders (PatientGenderCode=U) were removed due to privacy cell size.
 
 ####Utility Functions:
 
