@@ -5,12 +5,12 @@ date: "Friday, April 17, 2015"
 output: html_document
 ---
 
-##Programming Methodology for KHIIS Reports
+## Programming Methodology for KHIIS Reports
 
 ### SQL
 
-####Keys, Constraints, and Utility Functions:
-The "Raw Report Tables" file has been left intact for testing purposes. Use the modular for m in production, notably field ordering for gallbladder procedure tables differ between the two versions, and down-stream processing relies on the newer ordering within Modular_Report_Call.
+#### Keys, Constraints, and Utility Functions:
+The "Raw Report Tables" file has been left intact for testing purposes. Use the modular form in production, notably field ordering for gallbladder procedure tables differ between the two versions, and down-stream processing relies on the newer ordering within Modular_Report_Call.
 
 In all cases, the derived primary key (UniqID) is a concatenation of the following fields: MembershipID, PatientDOB, PatientGenderCode, and FamilyMembershipID.
 
@@ -18,7 +18,7 @@ Selections were constrained by ensuring Member, Summary, and Detail fields: Elig
 
 All uknown genders (PatientGenderCode=U) were removed due to privacy cell size.
 
-####Utility Functions:
+#### Utility Functions:
 
 * ElgMoMid: Takes the Member record's Eligibility Start Date, End Date, Submission Quarter, and the given year's date. 
  Tests for date reversal (start > end) and fixes if needed. Returns a count of months covered in the quarter. "Covered"" is defined as having coverage as of the 15th of the month. Note: Current method misses some corner cases, e.g. member has no record for quarter 1, but the quarter 2 record back-dates to the start of quarter 1, currently would only count 3 months instead of 6.
@@ -38,7 +38,7 @@ Months < 12   | 10-12
 Months > 12   | 10-12
 
 
-####Temporary Table Generation ReportProc(Year_Start='YYYYMMDD',Year_End='YYYYMMDD'):
+#### Temporary Table Generation ReportProc(Year_Start='YYYYMMDD',Year_End='YYYYMMDD'):
 Temporary table generation is in a stored procedure (ReportProc) accepting date bounds (year start, and year end).
 
 1. Table dentoptclaims: Created in order to later remove dental and vision claims since not all plans provide such coverage. Derived from Detail file, and filtered on Provider Specialty and Taxonomy codes. See Appendix A (pg 230) and Appendix C (Pgs 249,252-3) of the Data Dictionary. (4th Ed.)
@@ -236,7 +236,7 @@ AND RevenueProcedureCode IN('47562','47563','47564')
 );
 ```
 
-####Aggregated Outputs - Modular_Report_Call:
+#### Aggregated Outputs - Modular_Report_Call:
 1. *Year* Raw Members: Gives uniqID, Age Band, Patient Gender, County, Months Eligibility Band, Months Eligible, and submission year.
 
 ```
