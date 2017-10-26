@@ -323,16 +323,16 @@ LINES TERMINATED BY '\n'
 
 ### R
 
-####Libraries:
+#### Libraries:
 data.table, lubridate, dplyr, stringr, assertthat, reshape2.
 
-####Definition:
+#### Definition:
 In our calculations Average Total Cost is defined as the sum of total paid charges and member responsiblity for all members of the group divided by the sum of group member months divided by twelve or for each group SUM(TotPd+Mbrsp)/(SUM(MembMo)/12). If the sum of member months was 0, the square root of the group size was used instead or SUM(TotPd+Mbrsp)/sqrt(Group Size).
 
-####Style:  
+#### Style:  
 Coding primarily makes use of the split-apply-combine paradigm and R's "pipe" operator %>% which should be considered similar to a unix '|' or an arrow showing directed flow. 
 
-####Utility and Helper Functions:
+#### Utility and Helper Functions:
 All reading functions have a hard-coded base path and file name suffix. E.g.
 ````
 base_path = 'D:/MySQL_KHIIS_OUT/'
